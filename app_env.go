@@ -5,7 +5,14 @@ import (
 	"os"
 
 	"github.com/jmoiron/sqlx"
+	// init pg
+	_ "github.com/lib/pq"
 	"github.com/sadDoug/store"
+)
+
+const (
+	// DBAuthStub TBD
+	DBAuthStub = "user=saddoug_app dbname=saddoug sslmode=disable password=saddoug_password"
 )
 
 // AppEnv TBD
@@ -16,7 +23,7 @@ type AppEnv struct {
 
 // NewAppEnv TBD
 func NewAppEnv() (*AppEnv, error) {
-	db, err := sqlx.Connect("postgres", "user=foo dbname=bar sslmode=disable")
+	db, err := sqlx.Connect("postgres", DBAuthStub)
 	if err != nil {
 		log.Fatalln(err)
 	}

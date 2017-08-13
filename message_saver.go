@@ -8,7 +8,7 @@ import (
 
 // MessageSaver TBD
 type MessageSaver struct {
-	logger     log.Logger
+	logger     *log.Logger
 	inMessages messageSource
 }
 

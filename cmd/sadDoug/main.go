@@ -10,7 +10,7 @@ func main() {
 		panic(err)
 	}
 
-	messageSource, err := saddoug.NewBNWThread("")
+	messageSource, err := saddoug.NewBNWThread("EA3W6L")
 	if err != nil {
 		panic(err)
 	}

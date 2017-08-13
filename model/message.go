@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 // Message TBD
 type Message struct {
 	ID int64
@@ -9,6 +11,7 @@ type Message struct {
 
 	ExternalID string
 	AsnweredTo string
+	Time       time.Time
 
 	Author string
 
