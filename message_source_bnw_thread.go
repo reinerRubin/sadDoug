@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/sadDoug/model"
 )
 
 const (
@@ -24,13 +26,23 @@ type (
 
 	// BNWMessage TBD
 	BNWMessage struct {
-		ID      string `json:"id"`
-		ReplyTo string `json:"replyto"`
+		ID      string  `json:"id"`
+		ReplyTo *string `json:"replyto"`
 
 		Date float32 `json:"date"`
 		User string  `json:"user"`
 	}
 )
+
+func (bm *BNWMessage) toMessage() *model.Message {
+	return &model.Message{
+		Resource:   "bnw.im",
+		ExternalID: bm.ID,
+		AsnweredTo: bm.ReplyTo,
+		Time:       time.Now(), // TODO,
+		Author:     bm.User,
+	}
+}
 
 // NewBNWThread TBD
 func NewBNWThread(threadID string) (messageSource, error) {
@@ -49,6 +61,8 @@ func NewBNWThread(threadID string) (messageSource, error) {
 	if err := json.Unmarshal(body, bnwThread); err != nil {
 		return nil, err
 	}
+
+	firstMessage := bnwThread.Message
 	spew.Dump("thread", bnwThread)
 
 	return nil, nil
