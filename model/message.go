@@ -27,6 +27,6 @@ type Message struct {
 }
 
 // JoinMessagePaths TBD
-func JoinMessagePaths(a, b string) string {
-	return strings.Join([]string{a, b}, MessageTreeSeparator)
+func JoinMessagePaths(paths ...string) string {
+	return strings.Join(paths, MessageTreeSeparator)
 }

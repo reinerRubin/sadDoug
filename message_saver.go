@@ -3,6 +3,7 @@ package saddoug
 import (
 	"log"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/sadDoug/model"
 )
 
@@ -38,10 +39,12 @@ func (ms *MessageSaver) Run() error {
 			}
 		}
 	}()
+
 	return nil
 }
 
 func (ms *MessageSaver) saveMessage(message *model.Message) error {
 	ms.logger.Printf("save msg(%d)", message.ID)
+	spew.Dump(message)
 	return nil
 }

@@ -1,6 +1,10 @@
 package main
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	saddoug "github.com/sadDoug"
 )
 
@@ -23,4 +27,9 @@ func main() {
 	if err := messageSaver.Run(); err != nil {
 		panic(err)
 	}
+
+	// Handle SIGINT and SIGTERM.
+	ch := make(chan os.Signal)
+	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
+	<-ch
 }

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/sadDoug/model"
 )
 
@@ -35,11 +34,14 @@ type (
 )
 
 func (bm *BNWMessage) toMessage() *model.Message {
+	unixTime := int64(bm.Date)
+	createTime := time.Unix(unixTime, 0)
+
 	return &model.Message{
 		Resource:   "bnw.im",
 		ExternalID: bm.ID,
 		AsnweredTo: bm.ReplyTo,
-		Time:       time.Now(), // TODO,
+		Time:       createTime,
 		Author:     bm.User,
 	}
 }
@@ -62,8 +64,44 @@ func NewBNWThread(threadID string) (messageSource, error) {
 		return nil, err
 	}
 
-	firstMessage := bnwThread.Message
-	spew.Dump("thread", bnwThread)
+	return BNWThreadToMessageSource(bnwThread)
+}
 
-	return nil, nil
+// BNWThreadToMessageSource TBD
+func BNWThreadToMessageSource(thread *BNWThread) (messageSource, error) {
+	messageChan := make(chan *model.Message)
+
+	go func() {
+		dumpBNWThreadToChan(messageChan, thread)
+	}()
+
+	return messageChan, nil
+}
+
+func dumpBNWThreadToChan(messageChan chan *model.Message, thread *BNWThread) {
+	defer close(messageChan)
+
+	messages := make([]*BNWMessage, 0, 1+len(thread.Replies))
+	messages = append(messages, thread.Message)
+
+	for _, replyBNWMessage := range thread.Replies {
+		messages = append(messages, replyBNWMessage)
+	}
+
+	// XXX TODO recursion to fix messagesTreePath
+	messagesTreePath := ""
+	for _, BNWMessage := range messages {
+		message := BNWMessage.toMessage()
+		message.Topic = thread.MsgID
+
+		if messagesTreePath != "" {
+			messagesTreePath = model.JoinMessagePaths(messagesTreePath, message.ExternalID)
+		} else {
+			messagesTreePath = message.ExternalID
+		}
+
+		message.TreePath = messagesTreePath
+
+		messageChan <- message
+	}
 }
