@@ -88,20 +88,36 @@ func dumpBNWThreadToChan(messageChan chan *model.Message, thread *BNWThread) {
 		messages = append(messages, replyBNWMessage)
 	}
 
-	// XXX TODO recursion to fix messagesTreePath
-	messagesTreePath := ""
 	for _, BNWMessage := range messages {
 		message := BNWMessage.toMessage()
 		message.Topic = thread.MsgID
 
-		if messagesTreePath != "" {
-			messagesTreePath = model.JoinMessagePaths(messagesTreePath, message.ExternalID)
-		} else {
-			messagesTreePath = message.ExternalID
+		if BNWMessage.ID != thread.Message.ID {
+			message.TreePath = model.JoinMessagePaths(
+				thread.Message.ID,
+				traceBNWAnswer(messages, BNWMessage),
+			)
 		}
-
-		message.TreePath = messagesTreePath
 
 		messageChan <- message
 	}
+}
+
+func traceBNWAnswer(messages []*BNWMessage, targetMessage *BNWMessage) string {
+	var upMessage *BNWMessage
+	if targetMessage.ReplyTo == nil {
+		return targetMessage.ID
+	}
+
+	for _, m := range messages {
+		if m.ID == *targetMessage.ReplyTo {
+			upMessage = m
+			break
+		}
+	}
+
+	return model.JoinMessagePaths(
+		traceBNWAnswer(messages, upMessage),
+		targetMessage.ID,
+	)
 }
