@@ -28,7 +28,7 @@ type (
 		ID      string  `json:"id"`
 		ReplyTo *string `json:"replyto"`
 
-		Date float32 `json:"date"`
+		Date float64 `json:"date"`
 		User string  `json:"user"`
 	}
 )
