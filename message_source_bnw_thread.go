@@ -35,13 +35,13 @@ type (
 
 func (bm *BNWMessage) toMessage() *model.Message {
 	unixTime := int64(bm.Date)
-	createTime := time.Unix(unixTime, 0)
+	creationTime := time.Unix(unixTime, 0)
 
 	return &model.Message{
 		Resource:   "bnw.im",
 		ExternalID: bm.ID,
-		AsnweredTo: bm.ReplyTo,
-		Time:       createTime,
+		AnsweredTo: bm.ReplyTo,
+		PostedTime: creationTime,
 		Author:     bm.User,
 	}
 }

@@ -7,23 +7,23 @@ import (
 
 const (
 	// MessageTreeSeparator TBD
-	MessageTreeSeparator = "^^"
+	MessageTreeSeparator = ">->"
 )
 
 // Message TBD
 type Message struct {
-	ID int64
+	ID int64 `db:"id"`
 
-	Resource string
-	Topic    string
+	Resource string `db:"resource"`
+	Topic    string `db:"topic"`
 
-	ExternalID string
-	AsnweredTo *string
-	Time       time.Time
+	ExternalID string    `db:"external_id"`
+	AnsweredTo *string   `db:"answered_to"`
+	PostedTime time.Time `db:"posted_time"`
 
-	Author string
+	Author string `db:"author"`
 
-	TreePath string
+	TreePath string `db:"tree_path"`
 }
 
 // JoinMessagePaths TBD

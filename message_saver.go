@@ -3,21 +3,24 @@ package saddoug
 import (
 	"log"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/sadDoug/model"
+	"github.com/sadDoug/store"
 )
 
 // MessageSaver TBD
 type MessageSaver struct {
-	logger     *log.Logger
-	inMessages messageSource
+	inMessages   messageSource
+	messageStore store.Message
+
+	logger *log.Logger
 }
 
 // NewMessageSaver TBD
 func NewMessageSaver(appEnv *AppEnv, ms messageSource) (*MessageSaver, error) {
 	return &MessageSaver{
-		logger:     appEnv.Logger,
-		inMessages: ms,
+		logger:       appEnv.Logger,
+		inMessages:   ms,
+		messageStore: appEnv.MessageStore,
 	}, nil
 }
 
@@ -44,7 +47,5 @@ func (ms *MessageSaver) Run() error {
 }
 
 func (ms *MessageSaver) saveMessage(message *model.Message) error {
-	ms.logger.Printf("save msg(%d)", message.ID)
-	spew.Dump(message)
-	return nil
+	return ms.messageStore.Save(message)
 }
