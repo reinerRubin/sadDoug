@@ -18,7 +18,7 @@ type Message struct {
 	Topic    string `db:"topic"`
 
 	ExternalID string    `db:"external_id"`
-	AnsweredTo *string   `db:"answered_to"`
+	AnsweredTo string    `db:"answered_to"`
 	PostedTime time.Time `db:"posted_time"`
 
 	Author string `db:"author"`
