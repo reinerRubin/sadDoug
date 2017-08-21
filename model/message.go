@@ -24,6 +24,15 @@ type Message struct {
 	Author string `db:"author"`
 
 	TreePath string `db:"tree_path"`
+
+	MessageRegisterTime time.Time `db:"creation_time"`
+}
+
+// SetRegisterTime TBD
+func (m *Message) SetRegisterTime() {
+	if m.MessageRegisterTime.IsZero() {
+		m.MessageRegisterTime = time.Now()
+	}
 }
 
 // JoinMessagePaths TBD

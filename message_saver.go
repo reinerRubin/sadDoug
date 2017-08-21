@@ -47,5 +47,12 @@ func (ms *MessageSaver) Run() error {
 }
 
 func (ms *MessageSaver) saveMessage(message *model.Message) error {
+	if m, err := ms.messageStore.GetMessageByExternalID(message.ExternalID); err != nil {
+		return err
+	} else if m != nil {
+		return nil
+	}
+
+	message.SetRegisterTime()
 	return ms.messageStore.Save(message)
 }

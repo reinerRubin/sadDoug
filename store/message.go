@@ -1,6 +1,8 @@
 package store
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/sadDoug/model"
 )
@@ -8,6 +10,7 @@ import (
 type (
 	// Message TBD
 	Message interface {
+		GetMessageByExternalID(externalID string) (*model.Message, error)
 		Save(*model.Message) error
 	}
 
@@ -22,6 +25,28 @@ func NewDBMessage(db *sqlx.DB) (Message, error) {
 	return &DBMessage{
 		db: db,
 	}, nil
+}
+
+// GetMessageByExternalID TBD
+func (d *DBMessage) GetMessageByExternalID(externalID string) (*model.Message, error) {
+	messages := []model.Message{}
+	err := d.db.Select(&messages, "SELECT * FROM message WHERE external_id = $1", externalID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(messages) > 1 {
+		err := fmt.Errorf("multiply messages with uniq id: %s", externalID)
+		return nil, err
+	}
+
+	var message *model.Message
+	if len(messages) == 1 {
+		m := messages[0]
+		message = &m
+	}
+
+	return message, nil
 }
 
 // Save TBD
