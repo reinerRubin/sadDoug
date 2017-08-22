@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	messageSource, err := saddoug.NewBNWThread("EA3W6L")
+	messageSource, err := saddoug.NewBNWThread("NDKWL8")
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +28,6 @@ func main() {
 		panic(err)
 	}
 
-	// Handle SIGINT and SIGTERM.
 	ch := make(chan os.Signal)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
