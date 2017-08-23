@@ -72,6 +72,9 @@ RETURNING id
 			return err
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 
 	message.ID = ID
 
