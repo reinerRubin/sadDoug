@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	messageSource, err := saddoug.NewBNWThread("GGZD0Z")
+	messageSource, err := saddoug.NewBNWThread("H17XM7")
 	if err != nil {
 		panic(err)
 	}
