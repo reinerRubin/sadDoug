@@ -109,16 +109,20 @@ func dumpBNWThreadToChan(messageChan chan *model.Message, thread *BNWThread) {
 }
 
 func traceBNWAnswer(messages []*BNWMessage, targetMessage *BNWMessage) string {
-	var upMessage *BNWMessage
 	if targetMessage.ReplyTo == nil {
 		return targetMessage.ID
 	}
 
+	var upMessage *BNWMessage
 	for _, m := range messages {
 		if m.ID == *targetMessage.ReplyTo {
 			upMessage = m
 			break
 		}
+	}
+
+	if upMessage == nil {
+		return model.JoinMessagePaths(*targetMessage.ReplyTo, targetMessage.ID)
 	}
 
 	return model.JoinMessagePaths(

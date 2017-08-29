@@ -57,16 +57,23 @@ INSERT INTO message (
 ) VALUES (:resource, :topic, :external_id, :answered_to, :posted_time, :author, :tree_path)
 RETURNING id
         `, message)
-
 	if err != nil {
 		panic(err)
 	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			panic(err)
+		}
+	}()
 
 	var ID int64
 	if rows.Next() {
 		if err := rows.Scan(&ID); err != nil {
 			return err
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	message.ID = ID
