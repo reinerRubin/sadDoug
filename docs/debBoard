@@ -19,3 +19,41 @@ COPY (
         ORDER BY gs
 )
  TO '/tmp/test.csv' WITH CSV DELIMITER ',';
+
+---------------
+
+WITH stat AS (
+        SELECT gs, COUNT(m.id) AS cnt
+        FROM generate_series('2017-08-21 00:00:00+03', '2017-08-22 11:58:23+03', interval '5 minute') AS gs
+        LEFT JOIN message AS m ON m.posted_time - gs < '5 minute' AND m.posted_time - gs > '0 minute'
+        GROUP BY gs
+        ORDER BY gs
+),
+median AS (
+        SELECT median(cnt) AS m FROM stat WHERE cnt != 0
+)
+SELECT * FROM stat WHERE cnt > (SELECT * FROM median);
+
+-----------------
+
+
+WITH stat AS (
+        SELECT gs, COUNT(m.id) AS cnt
+        FROM generate_series('2017-08-21 00:00:00+03', '2017-08-22 11:58:23+03', interval '5 minute') AS gs
+        LEFT JOIN message AS m ON m.posted_time - gs < '5 minute' AND m.posted_time - gs > '0 minute'
+        GROUP BY gs
+        ORDER BY gs
+),
+median AS (
+        SELECT median(cnt) AS m FROM stat WHERE cnt != 0
+),
+puk AS (
+        SELECT gs, cnt FROM stat WHERE cnt <= (SELECT * FROM median) AND cnt > 0
+)
+SELECT puk.gs, puk.cnt, external_id, author FROM puk
+INNER JOIN message AS m
+  ON m.posted_time - puk.gs < '5 minute' AND m.posted_time - puk.gs > '0 minute'
+ORDER BY puk.cnt ASC;
+
+
+--------------------
